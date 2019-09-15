@@ -100,6 +100,15 @@ def sum_browser_type(result):
 
     return browser_dict
 
+def image_hits(totals_dict):
+    pass
+
+def popular_browser(browser_dict):
+    pass
+
+def time_hits(time_dict):
+    pass
+
 
 def processData(csvContents):
     csvPayLoad = csv.reader(csvContents.decode('utf-8').splitlines())
