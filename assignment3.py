@@ -134,6 +134,13 @@ def process_data(csvContents):
 
     return csvResults
 
+def safeIntChecker(intStr):
+    try: 
+        num = int(intStr)
+        return (True, num)
+    except ValueError:
+        return (False, None)    
+
 
 def get_data(url):
     csvData = urllib.urlopen(url)
@@ -176,6 +183,19 @@ def main():
             print(
                 f'Something went wrong, you entered in <{args.url}>, please check your url param for errors')
             return SystemExit
+
+        CLI = result != None
+
+        while CLI:
+            keyed = keyed = input(
+                'Please Enter a number from [1 - 4] for the Assignment Answer\n\n 1 will print out Assignment III\n 2 will print out Assignment IV\n 3 will print out the Extra Credit\n 4 will print ALL\n\n Click any other key to exit\n')
+            (isInt, castNum) = safeIntChecker(keyed)
+
+            if isInt and castNum in [1, 2, 3, 4]:
+                print(castNum, 'CASTNUM')
+            else:
+                CLI = False
+
 
 
 if __name__ == '__main__':
