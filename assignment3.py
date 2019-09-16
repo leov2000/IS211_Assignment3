@@ -4,7 +4,7 @@ import urllib.request as urllib
 from datetime import datetime
 import csv
 import re
-import pprint
+from pprint import pprint
 
 
 def regex_config():
@@ -134,12 +134,34 @@ def process_data(csvContents):
 
     return csvResults
 
+
 def safeIntChecker(intStr):
-    try: 
+    try:
         num = int(intStr)
         return (True, num)
     except ValueError:
-        return (False, None)    
+        return (False, None)
+
+
+def print_time_hits(time_list):
+    print('\n')
+    print("Answer:")
+    pprint(time_list)
+    print('\n\n')
+
+
+def standard_print(string_result):
+    print(f"\n\nAnswer: {string_result}\n\n")
+
+
+def print_all(result):
+    result_copy = result[:]
+    time_hit_list = result_copy.pop()
+
+    for answer in result_copy:
+        standard_print(answer)
+
+    print_time_hits(time_hit_list)
 
 
 def get_data(url):
@@ -188,14 +210,19 @@ def main():
 
         while CLI:
             keyed = keyed = input(
-                'Please Enter a number from [1 - 4] for the Assignment Answer\n\n 1 will print out Assignment III\n 2 will print out Assignment IV\n 3 will print out the Extra Credit\n 4 will print ALL\n\n Click any other key to exit\n')
+                'Please Enter a number from [1 - 4] for the Assignment Answer\n\n 1 will print out Assignment III\n 2 will print out Assignment IV\n 3 will print out the Extra Credit\n 4 will print ALL\n\n Click any other key to exit\n\n')
             (isInt, castNum) = safeIntChecker(keyed)
 
-            if isInt and castNum in [1, 2, 3, 4]:
-                print(castNum, 'CASTNUM')
+            if isInt and castNum in range(1, 5):
+                if castNum == 3:
+                    print_time_hits(result[castNum-1])
+                elif castNum == 4:
+                    print_all(result)
+                else:
+                    standard_print(result[castNum-1])
+
             else:
                 CLI = False
-
 
 
 if __name__ == '__main__':
