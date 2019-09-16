@@ -107,7 +107,7 @@ def image_hits(totals_dict):
     image_total, file_total = tuple(totals_dict.values())
     percentage = (image_total / file_total) * 100
 
-    return f"Image requests account for {percentage}% of all requests."
+    return f'Image requests account for {percentage}% of all requests.'
 
 
 def popular_browser(browser_dict):
@@ -115,7 +115,7 @@ def popular_browser(browser_dict):
     head = sorted_browser_list[0]
     browser_name, hits = head
 
-    return f"The popular browser is {browser_name} with # {hits} hits."
+    return f'The popular browser is {browser_name} with # {hits} hits.'
 
 
 def time_hits(time_dict):
@@ -125,7 +125,7 @@ def time_hits(time_dict):
 
 def time_hits_formatted_message(time_item):
     hour, hits = time_item
-    return f"Hour {hour} has {hits} hits."
+    return f'Hour {hour} has {hits} hits.'
 
 
 def process_data(csvContents):
@@ -144,15 +144,20 @@ def safeIntChecker(intStr):
 
 
 def print_time_hits(time_list):
-    print('\n')
-    print("Answer:")
+    print('-' * 80)
+    print('\n\n')
+    print('Answer:')
     pprint(time_list)
     print('\n\n')
+    print('-' * 80)
 
 
 def standard_print(string_result):
-    print(f"\n\nAnswer: {string_result}\n\n")
-
+    print('-' * 80)
+    print('\n\n')
+    print(f'Answer: {string_result}')
+    print('\n\n')
+    print('-' * 80)
 
 def print_all(result):
     result_copy = result[:]
