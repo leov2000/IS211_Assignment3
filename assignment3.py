@@ -34,6 +34,47 @@ def regex_config():
     return regex_list
 
 
+def time_config():
+    """
+    A configuration function that scaffolds the 24 hour range for Extra Credit.
+
+    Parameters:
+        None 
+
+    Returns:
+        A config dictionary with strings keys representing the hour and 0 representing the lack of value.
+    """
+
+    time_dict = {
+        '00': 0,
+        '01': 0,
+        '02': 0,
+        '03': 0,
+        '04': 0,
+        '05': 0,
+        '06': 0,
+        '07': 0,
+        '08': 0,
+        '09': 0,
+        '10': 0,
+        '11': 0,
+        '12': 0,
+        '13': 0,
+        '14': 0,
+        '15': 0,
+        '16': 0,
+        '17': 0,
+        '18': 0,
+        '19': 0,
+        '20': 0,
+        '21': 0,
+        '22': 0,
+        '23': 0,
+    }
+
+    return time_dict
+
+
 def regex_browser_search(browser_list, regex_list):
     """
     A function used to aggregate browser-types to browser.
@@ -73,7 +114,7 @@ def get_all_browser_types(result):
 
     Parameters:
         result(list[list[str]]): The result payload converted into a list
-    
+
     Returns:
         the result of calling the sum_browser_type which summarizes the user-agent 
         type into a dictionary.
@@ -150,6 +191,27 @@ def sum_time_visits(time_visit_list):
     return sum_dict
 
 
+def merge_time_visits(time_config_dict, time_visits_dict):
+    """
+    A function used to scaffold the time hits result Answer. 
+    A 24 hour shell config dictionary is overriden using the values generated from the actual sum
+
+    Eg:
+     { **{ '01': 0, '02': 0, '03': 0, '04': 0}, **{'01': 25, '02': 30, '03' 0} } => {'01': 25, '02': 30, '03' 0, '04': 0}
+
+    Parameters: 
+        time_config_dict(dict[str, int]) a config dictionary representing the entire 24 hours with 0 as a value.
+        time_visits_dict(dict[str, int]) the actual summed dictionary by the hour. 
+
+    Returns:
+        An updated merged dictionary that contains the actual values and 0 val if that hour isn't present in the summary.
+    """
+
+    merged_time_dict = {**time_config_dict, **time_visits_dict}
+
+    return merged_time_dict
+
+
 def sum_all_browsers(user_agent_dict, matched_browser):
     """
     A function used to find and pluck the values summed from the browser_total_dicts
@@ -191,7 +253,7 @@ def sum_browser_type(result):
 
     Parameters:
         result(list[str]) - the plucked user-agent-browser result from the payload
-    
+
     Returns:
         A dictionary with the summed user-agent-totals
     """
@@ -229,7 +291,7 @@ def popular_browser(browser_dict):
 
     Parameters:
         browser_dict(dict[str, int]): The browser totals for all 4 browsers in this payload.
-    
+
     Returns:
         A string representing the popular browser.
 
@@ -248,7 +310,7 @@ def time_hits(time_dict):
 
     Parameters:
         time_dict(dict[str, int]): The time totals
-    
+
     Returns:
         A formatted string with the help of its respective formatting function
 
@@ -265,7 +327,7 @@ def time_hits_formatted_message(time_item):
 
     Parameters:
         time_item:(tuple(str, int)): A tuple containing the hour string and time hits int
-    
+
     Returns:
         A formatted string indicating the hits by the hour.
     """
@@ -281,7 +343,7 @@ def process_data(csvContents):
 
     Parameters:
         csvContents(bytes): csv data fetched
-   
+
     Returns:
         A list of the payload. 
     """
@@ -299,7 +361,7 @@ def json_file_meta_browser_details(dict_one, dict_two):
     Parameters:
         dict_one(dict[str, int]): user-agent totals
         dict_two(dict[str, int]): browser totals
-   
+
     Prints:
         the user agent totals and browser totals. 
     """
@@ -316,7 +378,7 @@ def json_file_meta_browser_details(dict_one, dict_two):
 def safe_int_checker(int_str):
     """
     A function that checks if the string is actually an int. used for the CLI.
-    
+
     Parameters:
         int_str(str): A string representing an int.
 
@@ -337,7 +399,7 @@ def print_time_hits(time_list):
 
     Parameters:
         time_list(list[str])
-    
+
     Prints:
         pretty prints a list.
     """
@@ -356,7 +418,7 @@ def standard_print(string_result):
 
     Parameters:
         string_result(str): a formatted time string
-    
+
     Print:
         Prints the formatted time string
     """
@@ -374,7 +436,7 @@ def print_all(result):
 
     Parameters:
         result(list)
-    
+
     Prints:
         Assignment III, Assignment IV and Extra Credit
     """
@@ -395,10 +457,10 @@ def get_data(url):
 
     Parameters:
         url:(str): an http url
-    
+
     Returns:
         The list that fulfills Assignment III, Assignment IV and Extra Credit
-    
+
     """
 
     csvData = urllib.urlopen(url)
@@ -408,17 +470,20 @@ def get_data(url):
 
     regex_list = regex_config()
     user_agent_dict = get_all_browser_types(result)
-    matched_tally = regex_browser_search(list(user_agent_dict.keys()), regex_list)
+    matched_tally = regex_browser_search(
+        list(user_agent_dict.keys()), regex_list)
     browser_count = sum_all_browsers(user_agent_dict, matched_tally)
 
     json_file_meta_browser_details(user_agent_dict, browser_count)
 
+    time_config_dict = time_config()
     time_list = get_time_visits(result)
     time_total = sum_time_visits(time_list)
+    merged_time_totals = merge_time_visits(time_config_dict, time_total)
 
     image_percentage = image_hits(image_count)
     top_browser = popular_browser(browser_count)
-    hits_by_the_hour = time_hits(time_total)
+    hits_by_the_hour = time_hits(merged_time_totals)
 
     return [
         image_percentage,
@@ -433,11 +498,11 @@ def main():
 
     Parameters:
         None
-    
+
     Logs:
         An error if the string url is entered incorrectly.
     """
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument('url')
     args = parser.parse_args()
