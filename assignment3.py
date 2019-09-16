@@ -5,6 +5,7 @@ from datetime import datetime
 import csv
 import re
 from pprint import pprint
+import json
 
 
 def regex_config():
@@ -135,6 +136,16 @@ def process_data(csvContents):
     return csvResults
 
 
+def json_file_meta_browser_details(dict_one, dict_two):
+    json_dict = {
+        'browserTypeSum': dict_one,
+        'browserSum': dict_two
+    }
+
+    with open('browser-unique-results.json', 'w') as json_file:
+        json.dump(json_dict, json_file, indent=4)
+
+
 def safeIntChecker(intStr):
     try:
         num = int(intStr)
@@ -159,6 +170,7 @@ def standard_print(string_result):
     print('\n\n')
     print('-' * 80)
 
+
 def print_all(result):
     result_copy = result[:]
     time_hit_list = result_copy.pop()
@@ -179,6 +191,8 @@ def get_data(url):
     browser_dict = get_all_browser_types(result)
     matched_tally = regex_browser_search(list(browser_dict.keys()), regex_list)
     browser_count = sum_all_browsers(browser_dict, matched_tally)
+
+    json_file_meta_browser_details(browser_dict, browser_count)
 
     time_list = get_time_visits(result)
     time_total = sum_time_visits(time_list)
