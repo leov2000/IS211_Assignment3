@@ -204,6 +204,8 @@ def main():
         except (ValueError, urllib.HTTPError):
             print(
                 f'Something went wrong, you entered in <{args.url}>, please check your url param for errors')
+
+            logging.error(f'Error processing <{args.url}>')
             return SystemExit
 
         CLI = result != None
