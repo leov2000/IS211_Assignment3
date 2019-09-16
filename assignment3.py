@@ -14,10 +14,10 @@ def regex_config():
     chrome = 'Chrome'
 
     regex_list = [
-        {'safari': safari},
-        {'explorer': explorer},
-        {'firefox': firefox},
-        {'chrome': chrome}
+        {'Safari': safari},
+        {'Explorer': explorer},
+        {'Firefox': firefox},
+        {'Chrome': chrome}
     ]
 
     return regex_list
@@ -38,7 +38,7 @@ def regex_browser_search(browser_list, regex_list):
     return total_dict
 
 
-def get_browser_dict(result):
+def get_all_browser_types(result):
     browser_list = [browser[2] for browser in result]
     return sum_browser_type(browser_list)
 
@@ -67,10 +67,12 @@ def sum_time_visits(time_visit_list):
 
     for time in time_visit_list:
         date_obj = datetime.strptime(time, FORMAT)
-        if date_obj.hour in sum_dict:
-            sum_dict[date_obj.hour] += 1
+        hour_num = date_obj.strftime('%H')
+
+        if hour_num in sum_dict:
+            sum_dict[hour_num] += 1
         else:
-            sum_dict[date_obj.hour] = 1
+            sum_dict[hour_num] = 1
 
     return sum_dict
 
@@ -100,40 +102,62 @@ def sum_browser_type(result):
 
     return browser_dict
 
+
 def image_hits(totals_dict):
-    pass
+    image_total, file_total = tuple(totals_dict.values())
+    percentage = (image_total / file_total) * 100
+
+    return f"Image requests account for {percentage}% of all requests."
+
 
 def popular_browser(browser_dict):
-    pass
+    sorted_browser_list = sorted(list(browser_dict.items()))
+    head = sorted_browser_list[0]
+    browser_name, hits = head
+
+    return f"The popular browser is {browser_name} with # {hits} hits."
+
 
 def time_hits(time_dict):
-    pass
+    sorted_time_list = sorted(list(time_dict.items()))
+    return [time_hits_formatted_message(item) for item in sorted_time_list]
 
 
-def processData(csvContents):
+def time_hits_formatted_message(time_item):
+    hour, hits = time_item
+    return f"Hour {hour} has {hits} hits."
+
+
+def process_data(csvContents):
     csvPayLoad = csv.reader(csvContents.decode('utf-8').splitlines())
     csvResults = [row for row in csvPayLoad]
 
     return csvResults
 
 
-def downloadData(url):
+def get_data(url):
     csvData = urllib.urlopen(url)
-    result = processData(csvData.read())
+    result = process_data(csvData.read())
 
     image_count = sum_image_count(result)
 
     regex_list = regex_config()
-    browser_dict = get_browser_dict(result)
+    browser_dict = get_all_browser_types(result)
     matched_tally = regex_browser_search(list(browser_dict.keys()), regex_list)
     browser_count = sum_all_browsers(browser_dict, matched_tally)
 
     time_list = get_time_visits(result)
     time_total = sum_time_visits(time_list)
 
-    print(image_count)
-    print(time_total)
-    print(browser_count)
+    image_percentage = image_hits(image_count)
+    top_browser = popular_browser(browser_count)
+    hits_by_the_hour = time_hits(time_total)
+
+    return [
+        image_percentage,
+        top_browser,
+        hits_by_the_hour
+    ]
 
 
 def main():
@@ -147,7 +171,7 @@ def main():
 
     if(args.url):
         try:
-            downloadData(args.url)
+            result = get_data(args.url)
         except (ValueError, urllib.HTTPError):
             print(
                 f'Something went wrong, you entered in <{args.url}>, please check your url param for errors')
