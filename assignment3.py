@@ -41,11 +41,13 @@ def regex_browser_search(browser_list, regex_list):
 
 def get_all_browser_types(result):
     browser_list = [browser[2] for browser in result]
+
     return sum_browser_type(browser_list)
 
 
 def get_time_visits(result):
     time_list = [time_visit[1] for time_visit in result]
+
     return time_list
 
 
@@ -78,16 +80,16 @@ def sum_time_visits(time_visit_list):
     return sum_dict
 
 
-def sum_all_browsers(browser_totals_dict, matched_browser):
+def sum_all_browsers(user_agent_dict, matched_browser):
     sum_dict = {}
 
     for browser_name, browser_aggregate in matched_browser.items():
         for browser in browser_aggregate:
-            if browser in browser_totals_dict:
+            if browser in user_agent_dict:
                 if browser_name not in sum_dict:
-                    sum_dict[browser_name] = browser_totals_dict[browser]
+                    sum_dict[browser_name] = user_agent_dict[browser]
                 else:
-                    sum_dict[browser_name] += browser_totals_dict[browser]
+                    sum_dict[browser_name] += user_agent_dict[browser]
 
     return sum_dict
 
@@ -121,11 +123,13 @@ def popular_browser(browser_dict):
 
 def time_hits(time_dict):
     sorted_time_list = sorted(list(time_dict.items()))
+
     return [time_hits_formatted_message(item) for item in sorted_time_list]
 
 
 def time_hits_formatted_message(time_item):
-    hour, hits = time_item
+    (hour, hits) = time_item
+
     return f'Hour {hour} has {hits} hits.'
 
 
@@ -142,13 +146,13 @@ def json_file_meta_browser_details(dict_one, dict_two):
         'browserSum': dict_two
     }
 
-    with open('browser-unique-results.json', 'w') as json_file:
+    with open('browser-meta.json', 'w') as json_file:
         json.dump(json_dict, json_file, indent=4)
 
 
-def safeIntChecker(intStr):
+def safe_int_checker(int_str):
     try:
-        num = int(intStr)
+        num = int(int_str)
         return (True, num)
     except ValueError:
         return (False, None)
@@ -188,11 +192,11 @@ def get_data(url):
     image_count = sum_image_count(result)
 
     regex_list = regex_config()
-    browser_dict = get_all_browser_types(result)
-    matched_tally = regex_browser_search(list(browser_dict.keys()), regex_list)
-    browser_count = sum_all_browsers(browser_dict, matched_tally)
+    user_agent_dict = get_all_browser_types(result)
+    matched_tally = regex_browser_search(list(user_agent_dict.keys()), regex_list)
+    browser_count = sum_all_browsers(user_agent_dict, matched_tally)
 
-    json_file_meta_browser_details(browser_dict, browser_count)
+    json_file_meta_browser_details(user_agent_dict, browser_count)
 
     time_list = get_time_visits(result)
     time_total = sum_time_visits(time_list)
@@ -232,15 +236,15 @@ def main():
         while CLI:
             keyed = keyed = input(
                 'Please Enter a number from [1 - 4] for the Assignment Answer\n\n 1 will print out Assignment III\n 2 will print out Assignment IV\n 3 will print out the Extra Credit\n 4 will print ALL\n\n Click any other key to exit\n\n')
-            (isInt, castNum) = safeIntChecker(keyed)
+            (is_int, cast_num) = safe_int_checker(keyed)
 
-            if isInt and castNum in range(1, 5):
-                if castNum == 3:
-                    print_time_hits(result[castNum-1])
-                elif castNum == 4:
+            if is_int and cast_num in range(1, 5):
+                if cast_num == 3:
+                    print_time_hits(result[cast_num-1])
+                elif cast_num == 4:
                     print_all(result)
                 else:
-                    standard_print(result[castNum-1])
+                    standard_print(result[cast_num-1])
 
             else:
                 CLI = False
