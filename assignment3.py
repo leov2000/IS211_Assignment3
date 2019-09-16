@@ -23,6 +23,37 @@ def regex_config():
 
     return regex_list
 
+def time_config():
+
+    time_dict= {
+            '00': 0,
+            '01': 0,
+            '02': 0,
+            '03': 0,
+            '04': 0,
+            '05': 0,
+            '06': 0,
+            '07': 0,
+            '08': 0,
+            '09': 0,
+            '10': 0,
+            '11': 0,
+            '12': 0,
+            '13': 0,
+            '14': 0,
+            '15': 0,
+            '16': 0,
+            '17': 0,
+            '18': 0,
+            '19': 0,
+            '20': 0,
+            '21': 0,
+            '22': 0,
+            '23': 0,
+        }
+
+    return time_dict 
+
 
 def regex_browser_search(browser_list, regex_list):
     total_dict = {}
@@ -78,6 +109,11 @@ def sum_time_visits(time_visit_list):
             sum_dict[hour_num] = 1
 
     return sum_dict
+
+def merge_time_visits(time_config_dict, time_visits_dict):
+    merged_time_dict = {**time_config_dict, **time_visits_dict}
+
+    return merged_time_dict
 
 
 def sum_all_browsers(user_agent_dict, matched_browser):
@@ -198,12 +234,14 @@ def get_data(url):
 
     json_file_meta_browser_details(user_agent_dict, browser_count)
 
+    time_config_dict = time_config()
     time_list = get_time_visits(result)
     time_total = sum_time_visits(time_list)
+    merged_time_totals = merge_time_visits(time_config_dict, time_total)
 
     image_percentage = image_hits(image_count)
     top_browser = popular_browser(browser_count)
-    hits_by_the_hour = time_hits(time_total)
+    hits_by_the_hour = time_hits(merged_time_totals)
 
     return [
         image_percentage,
