@@ -253,7 +253,9 @@ def time_hits(time_dict):
         A formatted string with the help of its respective formatting function
 
     """
+
     sorted_time_list = sorted(list(time_dict.items()))
+
     return [time_hits_formatted_message(item) for item in sorted_time_list]
 
 
@@ -301,6 +303,7 @@ def json_file_meta_browser_details(dict_one, dict_two):
     Prints:
         the user agent totals and browser totals. 
     """
+
     json_dict = {
         'browserTypeSum': dict_one,
         'browserSum': dict_two
@@ -338,6 +341,7 @@ def print_time_hits(time_list):
     Prints:
         pretty prints a list.
     """
+
     print('-' * 80)
     print('\n\n')
     print('Answer:')
@@ -356,6 +360,7 @@ def standard_print(string_result):
     Print:
         Prints the formatted time string
     """
+
     print('-' * 80)
     print('\n\n')
     print(f'Answer: {string_result}')
@@ -373,6 +378,7 @@ def print_all(result):
     Prints:
         Assignment III, Assignment IV and Extra Credit
     """
+
     result_copy = result[:]
     time_hit_list = result_copy.pop()
 
@@ -431,6 +437,7 @@ def main():
     Logs:
         An error if the string url is entered incorrectly.
     """
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('url')
     args = parser.parse_args()
